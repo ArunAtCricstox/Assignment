@@ -1,0 +1,10 @@
+@import "./base.css";
+body {
+  background-color: rgb(230, 230, 230);
+}
+#app {
+  margin: 0 auto;
+  overflow: hidden;
+  background-color: rgb(230, 230, 230);
+  min-height: 100vh;
+}

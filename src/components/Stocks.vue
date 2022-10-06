@@ -1,0 +1,263 @@
+<script setup>
+import { onMounted, toRaw } from "vue";
+import { useDataStore } from "../stores/data";
+const dataStore = useDataStore();
+onMounted(() => {
+  dataStore.fetchAllStocks();
+  dataStore.fetchStockMetadata();
+  dataStore.fetchCountry();
+  // dataStore.fetchFranchise();
+  // dataStore.fetchLeague();
+});
+function handleFilter(type, val) {
+  switch (type) {
+    case "COUNTRY": {
+      val != "ALL"
+        ? (dataStore.selectedCountry = val)
+        : (dataStore.selectedCountry = null);
+      break;
+    }
+    case "STOCK": {
+      dataStore.selectedStock = val?.toUpperCase();
+      break;
+    }
+    case "MARKETWATCH": {
+      dataStore.selectedMarketwatch = val;
+      break;
+    }
+    case "FRANCHISE": {
+      val != "ALL"
+        ? (dataStore.selectedFranchise = val)
+        : (dataStore.selectedFranchise = null);
+      break;
+    }
+    case "LEAGUE": {
+      val != "ALL"
+        ? (dataStore.selectedLeague = val)
+        : (dataStore.selectedLeague = null);
+      break;
+    }
+    case "NO_OF_ROWS": {
+      val > 0 ? (dataStore.noOfRows = val) : (dataStore.noOfRows = 0);
+      break;
+    }
+  }
+}
+</script>
+
+<template>
+  <div class="input-container">
+    <div class="marketwatch-filter-wrapper">
+      <label for="marketwatch">Marketwatch</label>
+      <select
+        name="marketwatch"
+        @click="
+          (e) => {
+            handleFilter('MARKETWATCH', e.target.value);
+          }
+        "
+      >
+        <option selected="true" value="TRENDING">TRENDING</option>
+        <option value="LOOSERS">LOOSERS</option>
+        <option value="GAINERS">GAINERS</option>
+      </select>
+    </div>
+    <div class="country-filter-wrapper">
+      <label for="country">Country</label>
+      <select
+        name="country"
+        @click="
+          (e) => {
+            handleFilter('COUNTRY', e.target.value);
+          }
+        "
+      >
+        <option selected="true" :value="null">ALL</option>
+        <option v-for="{ name, id } in dataStore.country" :value="id" :id="id">
+          {{ name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="stock-search-wrapper">
+      <label for="">Search Stock</label>
+      <input
+        type="text"
+        v-model="stockName"
+        placeholder="Search Stock"
+        @keyup="
+          () => {
+            handleFilter('STOCK', stockName);
+          }
+        "
+      />
+    </div>
+    <div class="franchise-filter-wrapper">
+      <label for="">Franchise</label>
+      <select
+        @click="
+          (e) => {
+            handleFilter('FRANCHISE', e.target.value);
+          }
+        "
+      >
+        <option>ALL</option>
+        <option v-for="franchise in dataStore.franchise" :value="franchise.id">
+          {{ franchise.name }}
+        </option>
+      </select>
+    </div>
+    <div class="league-filter-wrapper">
+      <label for="league">League </label>
+      <select
+        name="league"
+        id="league"
+        @click="
+          (e) => {
+            handleFilter('LEAGUE', e.target.value);
+          }
+        "
+      >
+        <option>ALL</option>
+        <option v-for="league in dataStore.league" :value="league.id">
+          {{ league.name }}
+        </option>
+      </select>
+    </div>
+    <div class="no-of-row-wrapper">
+      <label>No. Of Stocks</label>
+      <input
+        placeholder="Type a No."
+        :value="dataStore.noOfRows"
+        type="number"
+        @keyup="
+          (e) => {
+            handleFilter('NO_OF_ROWS', e.target.value);
+          }
+        "
+      />
+    </div>
+  </div>
+  <div class="container">
+    <div v-for="stock in toRaw(dataStore.filteredStock)">
+      <div class="stock-card">
+        <img
+          :src="`https://cricstox-prod-data.s3.ap-south-1.amazonaws.com/${stock.avatarImage}`"
+          alt="Avatar"
+        />
+        <div>
+          <div class="stock-name">{{ stock.name }}</div>
+          <div>
+            <span> {{ dataStore.countryMapping[stock.country] + " " }} </span>
+            <span>
+              {{
+                stock.franchise
+                  .map((e) =>
+                    dataStore.franchiseIdNameMapping[e]
+                      ? dataStore.franchiseIdNameMapping[e]
+                      : null
+                  )
+                  .join("")
+              }}
+            </span>
+          </div>
+          <div>
+            <span>₹{{ stock.currPrice }}</span>
+            <span :class="stock.pctChange > 0 ? 'gainer' : 'looser'"
+              >{{ stock.pctChange }}%</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.input-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+.container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  gap: 1rem;
+}
+.stock-card {
+  display: flex;
+  height: 6rem;
+  border-radius: 0.5rem;
+  padding: 8px;
+  background-color: rgb(156, 226, 226);
+}
+.stock-name {
+  white-space: nowrap;
+  font-weight: 500;
+}
+.gainer {
+  color: green;
+  padding-left: 5px;
+}
+.looser {
+  color: red;
+  padding-left: 5px;
+}
+.marketwatch-filter-wrapper,
+.country-filter-wrapper,
+.stock-search-wrapper,
+.franchise-filter-wrapper,
+.league-filter-wrapper,
+.no-of-row-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+label {
+  font-weight: 1.2rem;
+  font-size: 1.3rem;
+}
+select,
+input {
+  font-weight: 1.2rem;
+  font-size: 1.2rem;
+  padding: 4px 6px;
+  border-radius: 5px;
+  outline: none;
+}
+
+@media screen and (max-width: 1024px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0.5rem;
+  }
+
+  .marketwatch-filter-wrapper,
+  .country-filter-wrapper,
+  .stock-search-wrapper,
+  .franchise-filter-wrapper,
+  .league-filter-wrapper,
+  .no-of-row-wrapper {
+    margin: 1rem 0;
+  }
+}
+@media screen and (max-width: 768px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0.5rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    padding: 0.5rem;
+  }
+}
+</style>
