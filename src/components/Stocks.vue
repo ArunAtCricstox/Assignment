@@ -1,13 +1,18 @@
 <script setup>
+import { ref } from "vue";
 import { onMounted, toRaw } from "vue";
 import { useDataStore } from "../stores/data";
 const dataStore = useDataStore();
+const clicked = ref(false);
+
 onMounted(() => {
   dataStore.fetchAllStocks();
   dataStore.fetchStockMetadata();
   dataStore.fetchCountry();
   // dataStore.fetchFranchise();
   // dataStore.fetchLeague();
+  clicked.value = window.innerWidth > 768 ? true : false;
+  console.log(window.innerWidth, clicked);
 });
 function handleFilter(type, val) {
   switch (type) {
@@ -46,98 +51,109 @@ function handleFilter(type, val) {
 </script>
 
 <template>
-  <div class="input-container">
-    <div class="marketwatch-filter-wrapper">
-      <label for="marketwatch">Marketwatch</label>
-      <select
-        name="marketwatch"
-        @click="
-          (e) => {
-            handleFilter('MARKETWATCH', e.target.value);
-          }
-        "
-      >
-        <option selected="true" value="TRENDING">TRENDING</option>
-        <option value="LOOSERS">LOOSERS</option>
-        <option value="GAINERS">GAINERS</option>
-      </select>
-    </div>
-    <div class="country-filter-wrapper">
-      <label for="country">Country</label>
-      <select
-        name="country"
-        @click="
-          (e) => {
-            handleFilter('COUNTRY', e.target.value);
-          }
-        "
-      >
-        <option selected="true" :value="null">ALL</option>
-        <option v-for="{ name, id } in dataStore.country" :value="id" :id="id">
-          {{ name }}
-        </option>
-      </select>
-    </div>
+  <button class="toggle-button" @click="clicked = !clicked">Sort</button>
+  <Transition name="slide-fade">
+    <div v-if="clicked" class="input-container">
+      <div class="marketwatch-filter-wrapper">
+        <label for="marketwatch">Marketwatch</label>
+        <select
+          name="marketwatch"
+          @click="
+            (e) => {
+              handleFilter('MARKETWATCH', e.target.value);
+            }
+          "
+        >
+          <option selected="true" value="TRENDING">TRENDING</option>
+          <option value="LOOSERS">LOOSERS</option>
+          <option value="GAINERS">GAINERS</option>
+        </select>
+      </div>
+      <div class="country-filter-wrapper">
+        <label for="country">Country</label>
+        <select
+          name="country"
+          @click="
+            (e) => {
+              handleFilter('COUNTRY', e.target.value);
+            }
+          "
+        >
+          <option selected="true" :value="null">ALL</option>
+          <option
+            v-for="{ name, id } in dataStore.country"
+            :value="id"
+            :id="id"
+          >
+            {{ name }}
+          </option>
+        </select>
+      </div>
 
-    <div class="stock-search-wrapper">
-      <label for="">Search Stock</label>
-      <input
-        type="text"
-        v-model="stockName"
-        placeholder="Search Stock"
-        @keyup="
-          () => {
-            handleFilter('STOCK', stockName);
-          }
-        "
-      />
+      <div class="stock-search-wrapper">
+        <label for="">Search Stock</label>
+        <input
+          type="text"
+          v-model="stockName"
+          placeholder="Search Stock"
+          @keyup="
+            () => {
+              handleFilter('STOCK', stockName);
+            }
+          "
+        />
+      </div>
+      <div class="franchise-filter-wrapper">
+        <label for="">Franchise</label>
+        <select
+          @click="
+            (e) => {
+              handleFilter('FRANCHISE', e.target.value);
+            }
+          "
+        >
+          <option>ALL</option>
+          <option
+            v-for="franchise in dataStore.franchise"
+            :value="franchise.id"
+          >
+            {{ franchise.name }}
+          </option>
+        </select>
+      </div>
+      <div class="league-filter-wrapper">
+        <label for="league">League </label>
+        <select
+          name="league"
+          id="league"
+          @click="
+            (e) => {
+              handleFilter('LEAGUE', e.target.value);
+            }
+          "
+        >
+          <option>ALL</option>
+          <option v-for="league in dataStore.league" :value="league.id">
+            {{ league.name }}
+          </option>
+        </select>
+      </div>
+      <div class="no-of-row-wrapper">
+        <label>No. Of Stocks</label>
+        <input
+          placeholder="Type a No."
+          :value="dataStore.noOfRows"
+          type="number"
+          @keyup="
+            (e) => {
+              handleFilter('NO_OF_ROWS', e.target.value);
+            }
+          "
+        />
+      </div>
     </div>
-    <div class="franchise-filter-wrapper">
-      <label for="">Franchise</label>
-      <select
-        @click="
-          (e) => {
-            handleFilter('FRANCHISE', e.target.value);
-          }
-        "
-      >
-        <option>ALL</option>
-        <option v-for="franchise in dataStore.franchise" :value="franchise.id">
-          {{ franchise.name }}
-        </option>
-      </select>
-    </div>
-    <div class="league-filter-wrapper">
-      <label for="league">League </label>
-      <select
-        name="league"
-        id="league"
-        @click="
-          (e) => {
-            handleFilter('LEAGUE', e.target.value);
-          }
-        "
-      >
-        <option>ALL</option>
-        <option v-for="league in dataStore.league" :value="league.id">
-          {{ league.name }}
-        </option>
-      </select>
-    </div>
-    <div class="no-of-row-wrapper">
-      <label>No. Of Stocks</label>
-      <input
-        placeholder="Type a No."
-        :value="dataStore.noOfRows"
-        type="number"
-        @keyup="
-          (e) => {
-            handleFilter('NO_OF_ROWS', e.target.value);
-          }
-        "
-      />
-    </div>
-  </div>
+  </Transition>
+
   <div class="container">
     <div v-for="stock in toRaw(dataStore.filteredStock)">
       <div class="stock-card">
@@ -174,11 +190,26 @@ function handleFilter(type, val) {
 </template>
 
 <style scoped>
+select,
+input {
+  width: 150px;
+}
 .input-container {
   display: flex;
   justify-content: space-between;
   margin: 1rem 0;
   flex-wrap: wrap;
+}
+
+.toggle-button {
+  background-color: rgb(59, 59, 201);
+  padding: 8px 16px;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  margin: 1rem 0.5rem;
+  font-size: 1.2rem;
 }
 .container {
   display: grid;
@@ -242,7 +273,7 @@ input {
   .franchise-filter-wrapper,
   .league-filter-wrapper,
   .no-of-row-wrapper {
-    margin: 1rem 0;
+    margin: 0.3rem 0;
   }
 }
 @media screen and (max-width: 768px) {
@@ -251,6 +282,11 @@ input {
     grid-template-columns: repeat(2, 1fr);
     padding: 0.5rem;
   }
+  .input-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 1rem;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -258,6 +294,48 @@ input {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     padding: 0.5rem;
+  }
+  select,
+  input {
+    font-weight: 1rem;
+    font-size: 1rem;
+    padding: 4px 6px;
+    border-radius: 5px;
+    outline: none;
+  }
+  label {
+    font-size: 1.1rem;
+  }
+  .input-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 0rem;
+    margin: 0 8px;
+  }
+}
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.5s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(-50vw);
+  opacity: 0;
+}
+@media screen and (min-width: 769px) {
+  .slide-fade-leave-active,
+  .slide-fade-leave-to,
+  .slide-fade-enter-active,
+  .slide-fade-enter-from {
+    transition: none;
+    display: block !important;
+  }
+  .toggle-button {
+    display: none;
   }
 }
 </style>

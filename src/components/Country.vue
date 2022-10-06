@@ -32,6 +32,32 @@ onMounted(() => {
   grid-template-columns: repeat(4, 1fr);
   width: 100%;
   gap: 1rem;
+  padding: 1.5rem 0;
+}
+
+@media screen and (max-width: 1024px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    gap: 1rem;
+  }
+}
+@media screen and (max-width: 768px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    gap: 1rem;
+  }
+}
+@media screen and (max-width: 480px) {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    width: 100%;
+    gap: 1rem;
+  }
 }
 .country-card {
   display: flex;
