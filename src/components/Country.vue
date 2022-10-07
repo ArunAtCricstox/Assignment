@@ -41,6 +41,7 @@ onMounted(() => {
     grid-template-columns: repeat(3, 1fr);
     width: 100%;
     gap: 1rem;
+    padding: 8px;
   }
 }
 @media screen and (max-width: 768px) {

@@ -4,9 +4,6 @@ import { onMounted, toRaw } from "vue";
 import { useDataStore } from "../stores/data";
 const dataStore = useDataStore();
 const clicked = ref(false);
-const marketWatch = ref("TRENDING");
-dataStore.selectedMarketwatch = marketWatch;
-console.log(marketWatch);
 
 onMounted(() => {
   dataStore.fetchAllStocks();
@@ -16,50 +13,15 @@ onMounted(() => {
   // dataStore.fetchLeague();
   clicked.value = window.innerWidth > 768 ? true : false;
 });
-function handleFilter(type, val) {
-  switch (type) {
-    case "COUNTRY": {
-      val != "ALL"
-        ? (dataStore.selectedCountry = val)
-        : (dataStore.selectedCountry = null);
-      break;
-    }
-    case "STOCK": {
-      dataStore.selectedStock = val?.toUpperCase();
-      break;
-    }
-    case "MARKETWATCH": {
-      dataStore.selectedMarketwatch = val;
-      break;
-    }
-    case "FRANCHISE": {
-      val != "ALL"
-        ? (dataStore.selectedFranchise = val)
-        : (dataStore.selectedFranchise = null);
-      break;
-    }
-    case "LEAGUE": {
-      val != "ALL"
-        ? (dataStore.selectedLeague = val)
-        : (dataStore.selectedLeague = null);
-      break;
-    }
-    case "NO_OF_ROWS": {
-      val > 0 ? (dataStore.noOfRows = val) : (dataStore.noOfRows = 0);
-      break;
-    }
-  }
-}
 </script>
 
 <template>
-  <pre>{{ marketWatch }}</pre>
   <button class="toggle-button" @click="clicked = !clicked">Sort</button>
   <Transition name="slide-fade">
     <div v-if="clicked" class="input-container">
       <div class="marketwatch-filter-wrapper">
         <label for="marketwatch">Marketwatch</label>
-        <select name="marketwatch" v-model="marketWatch">
+        <select name="marketwatch" v-model="dataStore.selectedMarketwatch">
           <option selected="true" value="TRENDING">TRENDING</option>
           <option value="LOOSERS">LOOSERS</option>
           <option value="GAINERS">GAINERS</option>
@@ -67,15 +29,8 @@ function handleFilter(type, val) {
       </div>
       <div class="country-filter-wrapper">
         <label for="country">Country</label>
-        <select
-          name="country"
-          @click="
-            (e) => {
-              handleFilter('COUNTRY', e.target.value);
-            }
-          "
-        >
-          <option selected="true" :value="null">ALL</option>
+        <select name="country" v-model="dataStore.selectedCountry">
+          <option selected="true" value="ALL">ALL</option>
           <option
             v-for="{ name, id } in dataStore.country"
             :value="id"
@@ -90,25 +45,14 @@ function handleFilter(type, val) {
         <label for="">Search Stock</label>
         <input
           type="text"
-          v-model="stockName"
           placeholder="Search Stock"
-          @keyup="
-            () => {
-              handleFilter('STOCK', stockName);
-            }
-          "
+          v-model="dataStore.selectedStock"
         />
       </div>
       <div class="franchise-filter-wrapper">
-        <label for="">Franchise</label>
-        <select
-          @click="
-            (e) => {
-              handleFilter('FRANCHISE', e.target.value);
-            }
-          "
-        >
-          <option>ALL</option>
+        <label>Franchise</label>
+        <select v-model="dataStore.selectedFranchise">
+          <option value="ALL">ALL</option>
           <option
             v-for="franchise in dataStore.franchise"
             :value="franchise.id"
@@ -119,16 +63,8 @@ function handleFilter(type, val) {
       </div>
       <div class="league-filter-wrapper">
         <label for="league">League </label>
-        <select
-          name="league"
-          id="league"
-          @click="
-            (e) => {
-              handleFilter('LEAGUE', e.target.value);
-            }
-          "
-        >
-          <option>ALL</option>
+        <select name="league" id="league" v-model="dataStore.selectedLeague">
+          <option value="ALL">ALL</option>
           <option v-for="league in dataStore.league" :value="league.id">
             {{ league.name }}
           </option>
@@ -138,13 +74,8 @@ function handleFilter(type, val) {
         <label>No. Of Stocks</label>
         <input
           placeholder="Type a No."
-          :value="dataStore.noOfRows"
+          v-model="dataStore.noOfRows"
           type="number"
-          @keyup="
-            (e) => {
-              handleFilter('NO_OF_ROWS', e.target.value);
-            }
-          "
         />
       </div>
     </div>

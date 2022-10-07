@@ -15,32 +15,35 @@ export const useDataStore = defineStore("data", {
       "6e6d47d3-4a68-4cee-8ccb-2699e60a99a5": "leagueId",
       "84ecf1b7-dbbe-4526-93db-67bc77fa9e75": "leagueId",
     },
-    selectedCountry: null,
-    selectedFranchise: null,
-    selectedStock: null,
-    selectedLeague: null,
-    selectedMarketwatch: null,
+    selectedCountry: "ALL",
+    selectedFranchise: "ALL",
+    selectedStock: "",
+    selectedLeague: "ALL",
+    selectedMarketwatch: "TRENDING",
     franchiseIdNameMapping: {
       "6e6d47d3-4a68-4cee-8ccb-2699e60a99a5": "RCB",
       "84ecf1b7-dbbe-4526-93db-67bc77fa9e75": "CSK",
     },
-    noOfRows: null,
+    noOfRows: [],
   }),
   getters: {
     filteredStock: (state) => {
       return state.stocks
         .filter(
           (e) =>
-            (!state.selectedCountry || state.selectedCountry == e.country) &&
+            (state.selectedCountry == "ALL" ||
+              state.selectedCountry == e.country) &&
             (!state.selectedStock ||
-              e.name.toUpperCase().search(state.selectedStock) != -1) &&
-            (!state.selectedFranchise ||
+              e.name.toUpperCase().search(state.selectedStock?.toUpperCase()) !=
+                -1) &&
+            (state.selectedFranchise == "ALL" ||
               [...e.franchise].includes(state.selectedFranchise)) &&
-            getIsBelongToSelectedLeague(
-              e,
-              state.selectedLeague,
-              state.franchiseMapping
-            )
+            (state.selectedLeague == "ALL" ||
+              getIsBelongToSelectedLeague(
+                e,
+                state.selectedLeague,
+                state.franchiseMapping
+              ))
         )
         .sort((a, b) => {
           switch (state.selectedMarketwatch) {
