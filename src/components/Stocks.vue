@@ -4,6 +4,9 @@ import { onMounted, toRaw } from "vue";
 import { useDataStore } from "../stores/data";
 const dataStore = useDataStore();
 const clicked = ref(false);
+const marketWatch = ref("TRENDING");
+dataStore.selectedMarketwatch = marketWatch;
+console.log(marketWatch);
 
 onMounted(() => {
   dataStore.fetchAllStocks();
@@ -50,24 +53,13 @@ function handleFilter(type, val) {
 </script>
 
 <template>
+  <pre>{{ marketWatch }}</pre>
   <button class="toggle-button" @click="clicked = !clicked">Sort</button>
   <Transition name="slide-fade">
     <div v-if="clicked" class="input-container">
       <div class="marketwatch-filter-wrapper">
         <label for="marketwatch">Marketwatch</label>
-        <select
-          name="marketwatch"
-          @touchstart="
-            (e) => {
-              handleFilter(`MARKETWATCH`, e.target.value);
-            }
-          "
-          @click="
-            (e) => {
-              handleFilter('MARKETWATCH', e.target.value);
-            }
-          "
-        >
+        <select name="marketwatch" v-model="marketWatch">
           <option selected="true" value="TRENDING">TRENDING</option>
           <option value="LOOSERS">LOOSERS</option>
           <option value="GAINERS">GAINERS</option>
