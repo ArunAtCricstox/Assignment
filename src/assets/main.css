@@ -5,6 +5,15 @@ body {
 }
 #app {
   overflow: hidden;
-  background-color: rgb(230, 230, 230);
+  /* background: linear-gradient(to bottom, #8e9eab, #eef2f3); */
+  /* background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e); */
+  /* background: linear-gradient(to top, #800080, #ffc0cb); */
+  /* background: linear-gradient(to top, #ada996, #f2f2f2, #dbdbdb, #eaeaea); */
+  /* background: linear-gradient(to top, #1a2a6c, #b21f1f, #fdbb2d); */
+  /* background: linear-gradient(to right, #1a2a6c, #b21f1f, #fdbb2d); */
+  /* background: linear-gradient(to right, #ff9966, #ff5e62); */
+  background-color: rgb(255, 255, 255);
+  background: linear-gradient(180deg, #050d41 0%, rgba(5, 13, 65, 0) 100%);
+
   min-height: 100vh;
 }

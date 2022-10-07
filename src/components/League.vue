@@ -1,9 +1,6 @@
 <script setup>
 import { onMounted } from "vue";
 import { useDataStore } from "../stores/data";
-const useData = useDataStore();
-onMounted(() => {
-  useData.fetchLeague();
-});
+const dataStore = useDataStore();
 </script>
-<template>League</template>
+<template></template>

@@ -1,32 +1,38 @@
 <script setup>
 import { RouterView } from "vue-router";
 </script>
-
 <template>
-  <header>
-    <ul>
-      <li>
-        <RouterLink to="/">Stocks</RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/country">Country</RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/league">League</RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/franchise">Franchise</RouterLink>
-      </li>
-    </ul>
-  </header>
-  <div class="content-wrapper">
-    <RouterView />
+  <div>
+    <header>
+      <ul>
+        <li>
+          <RouterLink to="/">Stocks</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/country">Country</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/league">League</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/franchise">Franchise</RouterLink>
+        </li>
+      </ul>
+    </header>
+
+    <div class="content-wrapper">
+      <RouterView />
+    </div>
   </div>
 </template>
 <style scoped>
 header {
   background-color: rgb(31, 29, 29);
+  /* background-color: #5c2e7e; */
+  height: 100px;
+  position: sticky;
 }
+
 ul {
   display: flex;
   align-items: center;

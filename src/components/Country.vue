@@ -4,7 +4,6 @@ import { useDataStore } from "../stores/data";
 const dataStore = useDataStore();
 onMounted(() => {
   dataStore.fetchCountry();
-  console.log(dataStore.country);
 });
 </script>
 <template>

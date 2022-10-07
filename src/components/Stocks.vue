@@ -4,7 +4,6 @@ import { onMounted, toRaw } from "vue";
 import { useDataStore } from "../stores/data";
 const dataStore = useDataStore();
 const clicked = ref(false);
-
 onMounted(() => {
   dataStore.fetchAllStocks();
   dataStore.fetchStockMetadata();
@@ -138,7 +137,7 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   width: 100%;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 .stock-card {
   display: flex;
@@ -146,6 +145,8 @@ onMounted(() => {
   border-radius: 0.5rem;
   padding: 8px;
   background-color: rgb(156, 226, 226);
+
+  /* box-shadow: 11px 9px 9px -3px rgba(106, 240, 240, 0.75); */
 }
 .stock-name {
   white-space: nowrap;
@@ -213,6 +214,10 @@ input {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 1rem;
+  }
+  .input-container {
+    position: sticky;
+    top: 0;
   }
 }
 
