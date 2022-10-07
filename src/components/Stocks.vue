@@ -22,7 +22,7 @@ onMounted(() => {
         <label for="marketwatch">Marketwatch</label>
         <select name="marketwatch" v-model="dataStore.selectedMarketwatch">
           <option selected="true" value="TRENDING">TRENDING</option>
-          <option value="LOOSERS">LOOSERS</option>
+          <option value="LOOSERS">LOSERS</option>
           <option value="GAINERS">GAINERS</option>
         </select>
       </div>
