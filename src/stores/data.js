@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { toRaw } from "vue";
 import { useFetch } from "../../helper";
+
 export const useDataStore = defineStore("data", {
   state: () => ({
     stocks: [],
@@ -11,8 +12,8 @@ export const useDataStore = defineStore("data", {
     success: null,
     countryMapping: {},
     franchiseMapping: {
-      "6e6d47d3-4a68-4cee-8ccb-2699e60a99a5": "asdfg",
-      "84ecf1b7-dbbe-4526-93db-67bc77fa9e75": "asdfg",
+      "6e6d47d3-4a68-4cee-8ccb-2699e60a99a5": "leagueId",
+      "84ecf1b7-dbbe-4526-93db-67bc77fa9e75": "leagueId",
     },
     selectedCountry: null,
     selectedFranchise: null,
@@ -26,34 +27,21 @@ export const useDataStore = defineStore("data", {
     noOfRows: null,
   }),
   getters: {
-    filteredStock: (state) =>
-      (state.selectedCountry
-        ? state.stocks.filter((e) => state.selectedCountry === e.country)
-        : state.stocks
-      )
-        .filter((e) => {
-          return state.selectedStock
-            ? e.name?.toUpperCase().search(state.selectedStock) != -1
-            : true;
-        })
-        .filter((e) =>
-          state.selectedFranchise
-            ? [...e.franchise].includes(state.selectedFranchise)
-            : true
+    filteredStock: (state) => {
+      return state.stocks
+        .filter(
+          (e) =>
+            (!state.selectedCountry || state.selectedCountry == e.country) &&
+            (!state.selectedStock ||
+              e.name.toUpperCase().search(state.selectedStock) != -1) &&
+            (!state.selectedFranchise ||
+              [...e.franchise].includes(state.selectedFranchise)) &&
+            getIsBelongToSelectedLeague(
+              e,
+              state.selectedLeague,
+              state.franchiseMapping
+            )
         )
-        .filter((e) => {
-          if (state.selectedLeague) {
-            let isBelongToSelectedLeague = false;
-            e.franchise.map((currFrachise) => {
-              state.franchiseMapping[currFrachise] === state.selectedLeague
-                ? (isBelongToSelectedLeague = true)
-                : null;
-            });
-            return isBelongToSelectedLeague;
-          } else {
-            return true;
-          }
-        })
         .sort((a, b) => {
           switch (state.selectedMarketwatch) {
             case "GAINERS": {
@@ -69,7 +57,8 @@ export const useDataStore = defineStore("data", {
             }
           }
         })
-        .slice(0, state.noOfRows),
+        .slice(0, state.noOfRows);
+    },
   },
 
   actions: {
@@ -166,7 +155,16 @@ export const useDataStore = defineStore("data", {
     },
   },
 });
-
+function getIsBelongToSelectedLeague(e, selectedLeague, franchiseMapping) {
+  if (!selectedLeague) return true;
+  let isBelongToSelectedLeague = false;
+  e.franchise.map((currFrachise) => {
+    franchiseMapping[currFrachise] === selectedLeague
+      ? (isBelongToSelectedLeague = true)
+      : null;
+  });
+  return isBelongToSelectedLeague;
+}
 function getDummyFranchise() {
   return [
     {
@@ -186,5 +184,5 @@ function getDummyFranchise() {
 }
 
 function getDummyLeague() {
-  return [{ name: "IPL", id: "asdfg" }];
+  return [{ name: "IPL", id: "leagueId" }];
 }

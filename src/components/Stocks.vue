@@ -12,7 +12,6 @@ onMounted(() => {
   // dataStore.fetchFranchise();
   // dataStore.fetchLeague();
   clicked.value = window.innerWidth > 768 ? true : false;
-  console.log(window.innerWidth, clicked);
 });
 function handleFilter(type, val) {
   switch (type) {
@@ -58,6 +57,11 @@ function handleFilter(type, val) {
         <label for="marketwatch">Marketwatch</label>
         <select
           name="marketwatch"
+          @touchstart="
+            (e) => {
+              handleFilter(`MARKETWATCH`, e.target.value);
+            }
+          "
           @click="
             (e) => {
               handleFilter('MARKETWATCH', e.target.value);
@@ -164,7 +168,7 @@ function handleFilter(type, val) {
         <div>
           <div class="stock-name">{{ stock.name }}</div>
           <div>
-            <span> {{ dataStore.countryMapping[stock.country] + " " }} </span>
+            <span> {{ dataStore.countryMapping[stock.country] + ". " }} </span>
             <span>
               {{
                 stock.franchise
@@ -190,10 +194,6 @@ function handleFilter(type, val) {
 </template>
 
 <style scoped>
-select,
-input {
-  width: 150px;
-}
 .input-container {
   display: flex;
   justify-content: space-between;
@@ -265,6 +265,10 @@ input {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     padding: 0.5rem;
+  }
+  select,
+  input {
+    width: 150px;
   }
 
   .marketwatch-filter-wrapper,
