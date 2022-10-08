@@ -174,6 +174,7 @@ onMounted(() => {
 label {
   font-weight: 1.2rem;
   font-size: 1.3rem;
+  color: rgb(102, 150, 255);
 }
 select,
 input {
