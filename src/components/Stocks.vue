@@ -15,6 +15,11 @@ onMounted(() => {
   // dataStore.fetchLeague();
   clicked.value = window.innerWidth > 768 ? true : false;
 });
+function test(stock)
+{
+  singularSdk.event(stock.name)
+  console.log(singularSdk.getSingularDeviceId())
+}
 </script>
 
 <template>
@@ -85,7 +90,7 @@ onMounted(() => {
 
   <div class="container">
     <div v-for="stock in toRaw(dataStore.filteredStock)">
-      <div class="stock-card" @click = "()=>{singularSdk.event(stock.name)}">
+      <div class="stock-card" @click = "()=>{test(stock)}">
         <img
           :src="`https://cricstox-prod-data.s3.ap-south-1.amazonaws.com/${stock.avatarImage}`"
           alt="Avatar"
