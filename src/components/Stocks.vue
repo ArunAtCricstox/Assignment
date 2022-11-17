@@ -3,11 +3,9 @@ import { ref } from "vue";
 import { onMounted, toRaw } from "vue";
 import { useDataStore } from "../stores/data";
 import {singularSdk} from "singular-sdk"
-import initSingular from "../../singular"
 const dataStore = useDataStore();
 const clicked = ref(false);
 onMounted(() => {
-  initSingular()
   dataStore.fetchAllStocks();
   dataStore.fetchStockMetadata();
   dataStore.fetchCountry();
@@ -92,7 +90,7 @@ function test(stock)
     <div v-for="stock in toRaw(dataStore.filteredStock)">
       <div class="stock-card" @click = "()=>{test(stock)}">
         <img
-          :src="`https://cricstox-prod-data.s3.ap-south-1.amazonaws.com/${stock.avatarImage}`"
+          :src="`${stock.avatarImage}`"
           alt="Avatar"
         />
         <div>

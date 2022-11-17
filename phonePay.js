@@ -1,8 +1,5 @@
-<script setup>
-import {onMounted} from 'vue'
-import { RouterLink, RouterView } from "vue-router";
-import Home from "./views/Home.vue";
 import axios from "axios";
+
 const options = {
   method: 'POST',
   url: 'https://api-preprod.phonepe.com/apis/hermes/pg/v1/pay',
@@ -20,8 +17,9 @@ axios
         "mobileNumber": "9999999999",
         "paymentInstrument": {
           "type": "UPI_COLLECT",
-          "vpa": "is5617916-1@oksbi"
-        }
+          "vpa": "test-vpa@ybl"
+       
+        }   
       }
     )
   .then(function (response) {
@@ -30,8 +28,3 @@ axios
   .catch(function (error) {
     console.error(error);
   });
-
-</script>
-<template>
-  <Home />
-</template>
